@@ -1,0 +1,18 @@
+.page_title {
+  display: block;
+  font-weight: bold;
+  font-size: 1.28571em;
+}
+
+a {
+  color: #467B96;
+  text-decoration: none;
+}
+
+.page_title a {
+  margin-left: 10px;
+  padding: 3px 8px;
+  background: #E9E9E6;
+  font-size: .8em;
+  border-radius: 2px;
+}

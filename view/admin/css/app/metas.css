@@ -1,0 +1,116 @@
+.option-tabs {
+    list-style: none;
+    margin: 1em 0 25px;
+    padding: 0 0 25px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.option-tabs.fix-tabs {
+    margin-bottom: 1em;
+}
+
+.option-tabs a {
+    display: block;
+    margin-right: -1px;
+    border: 1px solid #D9D9D6;
+    padding: 0 15px;
+    height: 26px;
+    line-height: 26px;
+    color: #666;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.option-tabs a:hover {
+    background-color: #E9E9E6;
+    color: #666;
+    text-decoration: none;
+}
+
+.option-tabs li {
+    float: left;
+}
+
+.option-tabs li:first-child a {
+    -webkit-border-radius: 2px 0 0 2px;
+    -moz-border-radius: 2px 0 0 2px;
+    -ms-border-radius: 2px 0 0 2px;
+    -o-border-radius: 2px 0 0 2px;
+    border-radius: 2px 0 0 2px;
+}
+
+.option-tabs li:last-child a {
+    -webkit-border-radius: 0 2px 2px 0;
+    -moz-border-radius: 0 2px 2px 0;bottom
+    -ms-border-radius: 0 2px 2px 0;
+    -o-border-radius: 0 2px 2px 0;
+    border-radius: 0 2px 2px 0;
+}
+
+.option-tabs.right {
+    float: right;
+}
+
+.option-tabs li.current a,.option-tabs li.active a {
+    background-color: #E9E9E6;
+}
+
+/**
+ * Tags
+ */
+
+ul.tag-list {
+    list-style: none;
+    margin: 0;
+    padding: 20px;
+    background-color: #FFF;
+}
+
+ul.tag-list li {
+    display: inline-block;
+    margin: 0 0 5px 0;
+    padding: 5px 5px 5px 10px;
+    cursor: pointer;
+}
+
+ul.tag-list li:hover {
+    background-color: #E9E9E6;
+}
+
+ul.tag-list li input {
+    display: none;
+}
+
+ul.tag-list li.checked {
+    background-color: #FFFBCC;
+}
+
+ul.tag-list li.size-5 {
+    font-size: 1em;
+}
+
+ul.tag-list li.size-10 {
+    font-size: 1.2em;
+}
+
+ul.tag-list li.size-20 {
+    font-size: 1.4em;
+}
+
+ul.tag-list li.size-30 {
+    font-size: 1.6em;
+}
+
+ul.tag-list li.size-0 {
+    font-size: 1.8em;
+}
+
+.tag-edit-link {
+    visibility: hidden;
+}
+
+li:hover .tag-edit-link {
+    visibility: visible;
+}

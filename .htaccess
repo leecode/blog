@@ -1,0 +1,6 @@
+RewriteEngine on
+DirectoryIndex index.php index.html index.htm
+RewriteBase /blog/
+
+RewriteRule ^admin\/(.*)$ index.php?app=admin
+#RewriteRule ^index.php\/([A-Za-z0-9\_\-]+)\/(.*)$ index.php?app=$1&%{QUERY_STRING}
