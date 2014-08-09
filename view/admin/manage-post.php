@@ -55,23 +55,6 @@
       <?php
         $url =  'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
         $list_page_url = substr($url, 0, strpos($url, '?'));
-        // Get blogs.
-        // $cotents_model = new Contents_Model();
-
-        // if(empty($page) || !is_numeric($page)) {
-        //   $page = 1;
-        // }
-
-        // if(empty($page_size) || !is_numeric($page_size)) {
-        //   $page_size = 10;
-        // }
-
-        // $q_title = trim($q);
-        // $contents_list = $cotents_model->list_contents(($page - 1) * $page_size, $page_size, $q_title);
-        // $total = $cotents_model->list_contents(-1, -1, $q_title, true);    // count
-
-        $temp = $total % $page_size;
-        $page_count = intval(($temp == 0 ? ($total / $page_size) : ($total / $page_size + 1)));
 
         if(is_array($contents_list) && 0 != count($contents_list)) {
       ?>
@@ -106,16 +89,21 @@
             <?php
                 // 1 2 3 4 5
                 // 6 7 8 9 10
+                $temp = $total % $page_size;
+                $page_count = intval(($temp == 0 ? ($total / $page_size) : ($total / $page_size + 1)));
+
                 $pagination_right = ($page / $page_size + 1) * $page_size;
                 $pagination_right = $pagination_right < $page_count ? $pagination_right : $page_count;
                 $pagination_left = intval(($page / $page_size)) * $page_size + 1;
 
+                // 输出前一页
                 if($page == 1) {
                     echo '<li class="disabled"><a href="#">«</a></li>';
                 } else {
                     echo '<li><a href="'. $list_page_url .'?controller=contents&action=show&page=1&page_size=' . $page_size .'">«</a></li>';    
                 }
                 
+                // 输出中间页
                 for($pn = $pagination_left; $pn <= $pagination_right; $pn++) {
                     if($pn == $page) {
                         echo '<li class="active"><a href="#">' . $pn .'</a></li>';                            
@@ -124,6 +112,7 @@
                     }
                 }
 
+                // 输出下一页
                 if($page == $page_count) {
                     echo '<li class="disabled"><a href="#">»</a></li>';
                 } else {

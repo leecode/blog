@@ -35,8 +35,8 @@ final class Commons {
 		return $start_part . $delimiter . $model_name;
 	}
 
-	public static function timeToDate($time) {
-		return date('F j, Y', $time);
+	public static function timeToDate($time, $format = 'F j, Y') {
+		return date($format, $time);
 	}
 }
 ?>

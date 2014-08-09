@@ -42,15 +42,58 @@
           ?>
 	          <div class="comments">
 	          	<h4>已有<?php echo $comments_count;?>条评论</h4>
-	          	<ol>
+	          	<ol class="comment-list">
 	          <?php
 		          foreach ($comments as $comment_item) {
 		      ?>
-		      	<li><?php echo $comment_item['text'];?></li>  
+		      	<li class="comment-body comment-pattern comment-by-author">
+              <div class="comment-meta">
+                <?php echo Commons::timeToDate($comment_item['created'], 'F j, Y H:m:s');?>
+              </div>
+              <div class="comment-content">
+                <?php echo $comment_item['text'];?>
+              </div>
+              <div class="comment-reply">
+                <a href="javascript:" onclick="reply_to_comment();">回复</a>
+              </div>
+            </li>
 		      <?php
 		          }
 		      ?>
 		  		</ol>
+          <ul class="pagination">
+            <?php
+                $temp = $comments_count % $page_size;
+                $page_count = intval(($temp == 0 ? ($comments_count / $page_size) : ($comments_count / $page_size + 1)));
+
+                $pagination_right = ($page / $page_size + 1) * $page_size;
+                $pagination_right = $pagination_right < $page_count ? $pagination_right : $page_count;
+                $pagination_left = intval(($page / $page_size)) * $page_size + 1;
+
+                // 输出前一页
+                if($page == 1) {
+                    echo '<li class="disabled"><a href="#">«</a></li>';
+                } else {
+                    echo '<li><a href="'. $list_page_url .'?action=details&cid=' . $post['cid'] . '&page=1&page_size=' . $page_size .'">«</a></li>';
+                }
+                
+                // 输出中间页
+                for($pn = $pagination_left; $pn <= $pagination_right; $pn++) {
+                    if($pn == $page) {
+                        echo '<li class="active"><a href="#">' . $pn .'</a></li>';                            
+                    } else {
+                        echo '<li><a href="'. $list_page_url .'?action=details&cid=' . $post['cid'] . '&page=' . $pn . '&page_size=' . $page_size .'">' . $pn .'</a></li>';                            
+                    }
+                }
+
+                // 输出下一页
+                if($page == $page_count) {
+                    echo '<li class="disabled"><a href="#">»</a></li>';
+                } else {
+                    echo '<li><a href="' . $list_page_url . '?action=details&cid=' . $post['cid'] . '&page=' . $page_count . '&page_size=' . $page_size .'">»</a></li>';
+                }
+                ?>
+          </ul>
 	          </div>
           <?php
       		}
@@ -62,8 +105,8 @@
           	<div class="form-group">
 	          	<label for="comment">评论*</label>
 	          	<textarea name="text" rows="8" cols="50" style="width:100%;resize:vertical;"></textarea>
-			</div>
-			<div class="form-group">
+			      </div>
+			      <div class="form-group">
             	<input type="submit" id="meta-save-btn" class="btn btn-success" value="保存" />
           	</div>
           </form>
@@ -112,5 +155,4 @@
       </p>
     </div>
     </div>
-
 </body>

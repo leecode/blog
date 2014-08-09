@@ -42,15 +42,20 @@ class Home_Controller extends Controller {
 
 		$contents = $this->model('contents');
 		$post = $contents->get_by_cid($params['cid']);
+		$page = isset($params['page']) ? $params['page'] : 1;
+		$page_size = FRONT_PAGE_SIZE;
+
 
 		Application::load_model('admin/comments');
 		$comments = $this->model('comments');
-		$comments_of_post = $comments->list_by_cid($params['cid']);
-		$count_of_comments = $comments->list_by_cid($params['cid'], true);
+		$comments_of_post = $comments->list_by_cid($params['cid'], ($page - 1) * FRONT_PAGE_SIZE, FRONT_PAGE_SIZE);
+		$count_of_comments = $comments->list_by_cid($params['cid'], -1, -1, '', true);
 
 		$params['post'] = $post;
 		$params['comments'] = $comments_of_post;
 		$params['comments_count'] = $count_of_comments;
+		$params['page'] = $page;
+		$params['page_size'] = $page_size;
 
 		$this->show_template('front/default/post', $params);
 	}
@@ -60,8 +65,6 @@ class Home_Controller extends Controller {
 	 */
 	public function comment() {
 		$params = func_get_arg(0);
-
-		error_log('LEECODE_DEBUG >>>>>>>>>>>>>>>> params_comment : ' . var_export($params, true));
 
 		Application::load_model('admin/comments');
 

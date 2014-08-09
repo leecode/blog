@@ -54,22 +54,35 @@ class Comments_Model extends Model {
 	 * @param $cid 文章id
 	 * @param $is_count 是否为获取评论总数， 默认为false，即获取评论列表
 	 */
-	public function list_by_cid($cid, $is_count = false) {
+	public function list_by_cid($cid, $offset = 0, $limit = 10, $q = '', $is_count = false, $is_manage = false) {
 		$sql = null;
 
-		$table = $this->table('comments');
+		$comment_table = $this->table('comments');
 
 		if(!$is_count) {
-			$sql = 'select coid, cid, created, text, parent from ' . $table . ' where 1=1 ';	
+			if($is_manage) {
+				$sql = 'select comment.coid, comment.cid, comment.created, comment.text, comment.parent, content.title post_title from '
+						. $comment_table . ' as comment, ' . $this->table('contents') . ' as content where comment.cid = content.cid ';
+			} else {
+				$sql = 'select coid, cid, created, text, parent from ' . $comment_table . ' as comment where 1=1 ';	
+			}
 		} else {
-			$sql = 'select count(1) total from ' . $table . ' where 1=1 ';
+			$sql = 'select count(1) total from ' . $comment_table . ' as comment where 1=1 ';
 		}
 		
-		if(!empty($cid) && is_numeric($cid)) {
+		if(!empty($cid) && is_numeric($cid) &&!$is_manage) {
 			$sql .= ' and cid = ' . $cid;
 		}
 
+		if(!empty($q)) {
+			$sql .= ' and comment.text like "%' . $q . '%" ';
+		}
+
 		$sql .= ' order by created desc';
+
+		if(0 <= $offset) {
+			$sql .= " limit $offset, $limit";
+		}
 
 		$result = $this->db->query($sql);
 

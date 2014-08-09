@@ -172,3 +172,40 @@ h6, .h6 {
   background-color: #f9f9f9;
   border-top: 1px solid #e5e5e5;
 }
+
+/**
+ * APP
+ */
+.table tbody tr:hover td {
+    background-color: #F6F6F3;
+}
+
+.table tbody tr.checked td {
+    background-color: #FFF9E8;
+}
+
+
+.table tr td .hidden-by-mouse {
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0;
+}
+
+.table tr:hover td .hidden-by-mouse {
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
+}
+
+a.operate-reply {
+    color: #545c30;
+}
+
+a.operate-delete {
+  color: #B94A48;
+}
+
+.w-90 {
+  width: 90%;
+}
+
+
+
