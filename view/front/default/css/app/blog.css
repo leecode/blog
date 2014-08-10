@@ -246,16 +246,23 @@ h6, .h6 {
     font-size: .92857em;
 }
 
-#comment-form label {
+#respond-form label {
     display: block;
     margin-bottom: .5em;
     font-weight: bold;
 }
 
-#comment-form .required:after {
+#respond-form .required:after {
     content: " *";
     color: #C00;
 }
+
+#cancel-comment-reply-link {
+  float: right;
+  font-size: .92857em;
+  display: none;
+}
+
 
 /*
  * Footer

@@ -45,8 +45,9 @@
 	          	<ol class="comment-list">
 	          <?php
 		          foreach ($comments as $comment_item) {
+                $comment_div_id = 'comment-' . $comment_item['coid'];
 		      ?>
-		      	<li class="comment-body comment-pattern comment-by-author">
+		      	<li id="<?php echo $comment_div_id?>" class="comment-body comment-pattern comment-by-author">
               <div class="comment-meta">
                 <?php echo Commons::timeToDate($comment_item['created'], 'F j, Y H:m:s');?>
               </div>
@@ -54,7 +55,7 @@
                 <?php echo $comment_item['text'];?>
               </div>
               <div class="comment-reply">
-                <a href="javascript:" onclick="reply_to_comment();">回复</a>
+                <a href="javascript:" onclick="reply_to_comment('<?php echo $comment_div_id;?>', <?php echo $comment_item['coid'];?>);">回复</a>
               </div>
             </li>
 		      <?php
@@ -98,19 +99,63 @@
           <?php
       		}
           ?>
-          <form id="comment-form" action="index.php" method="post">
+          <form id="respond-form" class="respond" action="index.php" method="post">
           	<input type="hidden" name="action" value="comment" />
           	<input type="hidden" name="cid" value="<?php echo $cid;?>"/>
-          	<h3>添加新评论</h3>
+            <a id="cancel-comment-reply-link" href="#" onclick="return cancelReply();">取消回复</a>
+          	<h4>添加新评论</h4>
           	<div class="form-group">
-	          	<label for="comment">评论*</label>
+	          	<label for="comment" class="required">评论</label>
 	          	<textarea name="text" rows="8" cols="50" style="width:100%;resize:vertical;"></textarea>
 			      </div>
+
 			      <div class="form-group">
             	<input type="submit" id="meta-save-btn" class="btn btn-success" value="保存" />
           	</div>
           </form>
+          <div id="respond-form-holder"></div>
         </div><!-- /.blog-main -->
+        <script type="text/javascript">
+          function reply_to_comment(commentDivId, commentId) {
+            var $commentDiv = $('#' + commentDivId);
+            var $respondForm = $('#respond-form');
+            var $parentInputField = $('#comment-parent');
+            if($parentInputField.length == 0) {
+              $parentInputField = $(createElement('input', {'type' : 'hidden', 'name' : 'parent', 'id' : 'comment-parent'}));
+            }
+
+            $parentInputField.val(commentId);
+            $respondForm.append($parentInputField);
+
+            $commentDiv.append($respondForm);
+
+             $('#cancel-comment-reply-link').show();
+            var textarea = $('textarea[name="text"]')[0];
+            textarea.focus();
+
+          }
+
+          function cancelReply() {
+            $('#respond-form-holder').parent().append($('#respond-form'));
+            $('#cancel-comment-reply-link').hide();
+            $('#comment-parent').remove();
+
+            return false;
+          }
+
+          /**
+           * 创建一个DOM元素
+           */
+          function createElement(tag, attr) {
+            var elem = document.createElement(tag);
+
+            for(var key in attr) {
+              elem.setAttribute(key, attr[key]);
+            }
+
+            return elem;
+          }
+        </script>
 
         <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
           <div class="sidebar-module sidebar-module-inset">
@@ -155,4 +200,7 @@
       </p>
     </div>
     </div>
-</body>
+</body> 
+<?php
+  include_once 'footer.php';
+?>
