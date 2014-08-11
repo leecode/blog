@@ -66,6 +66,17 @@
             ?>
           </ul>
         </section>
+        <section class="post-option">
+          <label>标签</label>
+          <p>
+            <ul class="token-input-list">
+              
+              <li class="token-input-input-token">
+                <input type="text" id="token-input-tags" style="outline:none;">
+              </li>
+            </ul>
+          </p>
+        </section>
       </div>
   </div>
 </div><!-- /.container -->
@@ -93,6 +104,19 @@
       $('#category-ids').val(category_id_str);
 
       $('form#blog_form').submit();
+    });
+
+    $('#token-input-tags').blur(function() {
+      var tagValue = this.value;
+      if(tagValue.length > 0) {
+        // tag有值
+        /*<li class="token-input-token"><p>fasdfa</p><span class="token-input-delete-token">×</span></li>*/
+        $('<li class="token-input-token"><p>' + tagValue + 
+          '</p><span class="token-input-delete-token">&times;</span></li>').insertBefore($(this)).click(function() {
+            $(this).parent().remove();
+          });
+        this.value = '';
+      }
     });
 	});
 </script>
