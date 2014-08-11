@@ -8,9 +8,9 @@ class Comments_Model extends Model {
 
 		$table = $this->table('comments');
 
-		$sql = 'insert into ' . $table . ' (cid, created, text, parent) values(' . $this->attributes['cid']
+		$sql = 'insert into ' . $table . ' (cid, created, text, parent, sub_parent) values(' . $this->attributes['cid']
 			   . ', ' . $this->attributes['created'] . ', "'
-			   . $this->attributes['text'] . '", ' . $this->attributes['parent'] . ')';
+			   . $this->attributes['text'] . '", ' . $this->attributes['parent'] . ',' . $this->attributes['sub_parent'] .')';
 
 		$this->db->query($sql);
 		return $this->db->insert_id();
@@ -62,12 +62,12 @@ class Comments_Model extends Model {
 		if(!$is_count) {
 			if($is_manage) {
 				$sql = 'select comment.coid, comment.cid, comment.created, comment.text, comment.parent, content.title post_title from '
-						. $comment_table . ' as comment, ' . $this->table('contents') . ' as content where comment.cid = content.cid ';
+						. $comment_table . ' as comment, ' . $this->table('contents') . ' as content where comment.cid = content.cid and comment.parent = 0 ';
 			} else {
-				$sql = 'select coid, cid, created, text, parent from ' . $comment_table . ' as comment where 1=1 ';	
+				$sql = 'select coid, cid, created, text, parent from ' . $comment_table . ' as comment where parent = 0 ';	
 			}
 		} else {
-			$sql = 'select count(1) total from ' . $comment_table . ' as comment where 1=1 ';
+			$sql = 'select count(1) total from ' . $comment_table . ' as comment where 1=1 and parent = 0';
 		}
 		
 		if(!empty($cid) && is_numeric($cid) &&!$is_manage) {
@@ -84,6 +84,7 @@ class Comments_Model extends Model {
 			$sql .= " limit $offset, $limit";
 		}
 
+		error_log('LEECODE_DEBUG >>>>>>>>>>>>>>>' . $sql);
 		$result = $this->db->query($sql);
 
 		if(!$is_count) {
@@ -99,6 +100,31 @@ class Comments_Model extends Model {
 
 			return $total;
 		}
+	}
+
+	function list_by_parent($parent, $is_manage = false, $is_count = false) {
+		$sql = null;
+		$comment_table = $this->table('comments');
+
+		if(!$is_count) {
+			$sql = 'select coid, cid, created, text, parent from ' . $comment_table . ' as comment where parent = ' . $parent . ' order by created desc';	
+		} else {
+			$sql = 'select count(1) total from ' . $comment_table . ' as comment where parent = ' . $parent;
+		}
+
+		$result = $this->db->query($sql);
+
+		if(!$is_count) {
+			$comments = array();
+			while($row = $this->db->fetch_array($result)) {
+				$comments[] = $row;
+			}
+			return $comments;
+		} else {
+			$row = $this->db->fetch_array($result);
+			return $row['total'];
+		}
+		
 	}
 }
 ?>

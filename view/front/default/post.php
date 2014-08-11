@@ -57,6 +57,28 @@
               <div class="comment-reply">
                 <a href="javascript:" onclick="reply_to_comment('<?php echo $comment_div_id;?>', <?php echo $comment_item['coid'];?>);">回复</a>
               </div>
+              <?php
+                if(0 < count($comment_item['sub-comments'])) {
+              ?>
+              <div class="comment-children">
+                <ol class="comment-list">
+                <?php foreach ($comment_item['sub-comments'] as $sub_comments) {
+                	?>
+                  <li class="comment-body comment-pattern comment-by-author">
+                      <div class="comment-meta">
+                        <?php echo Commons::timeToDate($sub_comments['created'], 'F j, Y H:m:s');?>
+                      </div>
+                      <div class="comment-content">
+                        <?php echo $sub_comments['text'];?>
+                      </div>
+                      <div class="comment-reply">
+                        <a href="javascript:" onclick="reply_to_comment('<?php echo $comment_div_id;?>', <?php echo $sub_comments['coid'];?>);">回复</a>
+                      </div>
+                  </li>
+                  <?php }?>
+                </ol>
+              </div>
+              <?php } ?>
             </li>
 		      <?php
 		          }
@@ -124,8 +146,22 @@
               $parentInputField = $(createElement('input', {'type' : 'hidden', 'name' : 'parent', 'id' : 'comment-parent'}));
             }
 
-            $parentInputField.val(commentId);
+            var $sub_parentInputField = $('#sub-comment-parent');
+            if(0 == $sub_parentInputField.length) {
+              $sub_parentInputField = $(createElement('input', 
+                                                      {'type' : 'hidden', 
+                                                       'name' : 'sub_parent', 
+                                                       'id' : 'sub-comment-parent'
+                                                      }));
+            }
+
+
+            var parent_id = parseInt(commentDivId.replace('comment-', ''), 10);
+            $parentInputField.val(parent_id);
+            $sub_parentInputField.val(commentId);
+
             $respondForm.append($parentInputField);
+            $respondForm.append($sub_parentInputField);
 
             $commentDiv.append($respondForm);
 
@@ -139,6 +175,7 @@
             $('#respond-form-holder').parent().append($('#respond-form'));
             $('#cancel-comment-reply-link').hide();
             $('#comment-parent').remove();
+            $('#sub-comment-parent').remove();
 
             return false;
           }

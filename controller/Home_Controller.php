@@ -51,6 +51,11 @@ class Home_Controller extends Controller {
 		$comments_of_post = $comments->list_by_cid($params['cid'], ($page - 1) * FRONT_PAGE_SIZE, FRONT_PAGE_SIZE);
 		$count_of_comments = $comments->list_by_cid($params['cid'], -1, -1, '', true);
 
+		for ($index = 0; $index < count($comments_of_post); $index++) {
+			$sub_comments = $comments->list_by_parent($comments_of_post[$index]['coid']);
+			$comments_of_post[$index]['sub-comments'] = $sub_comments;
+		}
+
 		$params['post'] = $post;
 		$params['comments'] = $comments_of_post;
 		$params['comments_count'] = $count_of_comments;
@@ -72,6 +77,7 @@ class Home_Controller extends Controller {
 		$comments->cid = $params['cid'];
 		$comments->text = $this->get_input('text');
 		$comments->parent = empty($params['parent']) ? 0 : $params['parent'];
+		$comments->sub_parent = empty($params['sub_parent']) ? 0 : $params['sub_parent'];
 		$comments->created = time();
 
 		$comments->save();
