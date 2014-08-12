@@ -112,11 +112,18 @@
         // tag有值
         /*<li class="token-input-token"><p>fasdfa</p><span class="token-input-delete-token">×</span></li>*/
         $('<li class="token-input-token"><p>' + tagValue + 
-          '</p><span class="token-input-delete-token">&times;</span></li>').insertBefore($(this)).click(function() {
-            $(this).parent().remove();
-          });
+          '</p><span class="token-input-delete-token">&times;</span></li>').insertBefore($(this));
         this.value = '';
+
+        $('span.token-input-delete-token').each(function() {
+          $(this).click(function() {
+            $(this).parent().remove();
+            console.log('shit');
+          });
+        });
       }
     });
+
+
 	});
 </script>
