@@ -1,5 +1,4 @@
 <?php
-  //$app_root = 'http://' . $_SERVER['HTTP_HOST'] . '/meblog';
   $admin_root_dir = dirname(__FILE__);
   include_once $admin_root_dir . '/header.php';
   include_once $admin_root_dir . '/menu.php';
@@ -70,9 +69,18 @@
           <label>标签</label>
           <p>
             <ul class="token-input-list">
-              
               <li class="token-input-input-token">
                 <input type="text" id="token-input-tags" style="outline:none;">
+                <?php
+                  foreach ($tag_list as $tag) {
+                    if(in_array($tag['mid'], $relationships)) {
+                ?>
+                  <li class="token-input-token"><p><?php echo $tag['name'];?></p><span class="token-input-delete-token">&times;</span></li>
+                <?php
+                    }
+                  }
+                ?>
+                
               </li>
             </ul>
           </p>
@@ -103,22 +111,25 @@
       var category_id_str = selected_categories.join(',');
       $('#category-ids').val(category_id_str);
 
-      $('form#blog_form').submit();
+      $blogForm = $('form#blog_form');
+      $('li.token-input-token > p').each(function() {
+        $('<input type="hidden" name="tags[]"/>').val($(this).text()).appendTo($blogForm);
+      });
+
+      $blogForm.submit();
     });
 
     $('#token-input-tags').blur(function() {
       var tagValue = this.value;
       if(tagValue.length > 0) {
         // tag有值
-        /*<li class="token-input-token"><p>fasdfa</p><span class="token-input-delete-token">×</span></li>*/
         $('<li class="token-input-token"><p>' + tagValue + 
-          '</p><span class="token-input-delete-token">&times;</span></li>').insertBefore($(this));
+          '</p><span class="token-input-delete-token">&times;</span></li>').insertAfter($(this));
         this.value = '';
 
         $('span.token-input-delete-token').each(function() {
           $(this).click(function() {
             $(this).parent().remove();
-            console.log('shit');
           });
         });
       }

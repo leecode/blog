@@ -18,14 +18,16 @@ class Contents_Controller extends Controller {
 
         $metas = $this->model('metas');
         $metas_list = $metas->list_metas();
+        $tag_list = $metas->list_metas('tag');
 
         $relationships = $this->model('relationships');
         if(isset($params['cid'])) {
-            $relations = $relationships->get_category_ids_of_contents($params['cid']);            
+            $relations = $relationships->get_category_ids_of_contents($params['cid']);
         }
 
         $this->show_template('admin/write-post', array('content_item' => $content_item,
                                                        'metas_list' => $metas_list,
+                                                       'tag_list' => $tag_list,
                                                        'relationships' => $relations));
     }
 
@@ -35,11 +37,6 @@ class Contents_Controller extends Controller {
 
     	$contents = $this->model('contents');
 
-  //       $cid = $this->get_input('cid');
-  //       $contents->cid = $cid;
-		// $contents->title = $this->get_input('title');
-		// $contents->text = $this->get_input('text');
-		// $contents->author_id = $this->get_input('author_id', -1);
         $cid = $params['cid'];
         $contents->cid = $cid;
         $contents->title = $params['title'];
@@ -60,19 +57,37 @@ class Contents_Controller extends Controller {
         }
         $category_ids = explode(',', $params['categories']);
 
+        $tags = $this->get_input('tags');     // 传递数组的话，目前只能通过从$_REQUEST/$_POST中获取。
+
+        Application::load_model('admin/metas');
+        $metas = $this->model('metas');
+        $tag_ids = array();
+
+        foreach ($tags as $tag) {
+            $metas->name = $tag;
+            $metas->type = 'tag';
+            $metas->description = $tag;
+            $metas->meta_order = 0;
+
+            $tag_id = $metas->save();
+            $tag_ids[] = $tag_id;
+        }
+
+        $category_ids = array_merge($category_ids, $tag_ids);
+
         Application::load_model('admin/relationships');
         // 先删除所有的relationships
         $relationships = $this->model('relationships');
         $relationships->cid = 0 == $cid ? $contents->cid : $cid;
         $relationships->delete();
 
+        // 重新创建relationships
         foreach ($category_ids as $cate) {
             $relationships->mid = $cate;
             $relationships->save();
         }
 
         // Should forward to post manage page.
-        //$this->show();
         Commons::forward('admin/index.php?controller=contents&action=show');
     }
 

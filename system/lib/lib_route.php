@@ -22,6 +22,7 @@ final class Route {
 		} else {
 			$to_parse = $_SERVER['REQUEST_URI'];
 		}
+
 		$this->url_query = parse_url($to_parse);
 	}
 
