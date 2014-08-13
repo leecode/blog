@@ -53,7 +53,7 @@ class Metas_Model extends Model {
 		if(empty($type)) {
 			$type = 'category';
 		}
-		$sql = 'select mid, name, description, type, meta_order from ' . $this->table('metas') .
+		$sql = 'select mid, name, description, type, meta_order , count from ' . $this->table('metas') .
 			   ' where type = "' . $type . '" order by meta_order';
 
 		$result = $this->db->query($sql);

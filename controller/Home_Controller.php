@@ -19,13 +19,20 @@ class Home_Controller extends Controller {
 			$page = 1;
 		}
 
+		$category = $params['category'];
 
-		$posts = $contents->list_contents(($page - 1) * FRONT_PAGE_SIZE, FRONT_PAGE_SIZE, $q);
-		$post_count = $contents->list_contents(-1, -1, $q, true);
+		$posts = $contents->list_contents(($page - 1) * FRONT_PAGE_SIZE, FRONT_PAGE_SIZE, $q, false, $category);
+		$post_count = $contents->list_contents(-1, -1, $q, true, $category);
 
 		$page_count = (0 == (int)($post_count / FRONT_PAGE_SIZE)) ? 
 							(int)($post_count / FRONT_PAGE_SIZE) : 
 							(int)($post_count / FRONT_PAGE_SIZE) + 1;
+
+		Application::load_model('admin/metas');
+		$metas = $this->model('metas');
+		$cates = $metas->list_metas();
+
+		$params['categories'] = $cates;
 		$params['posts'] = $posts;
 		$params['page_count'] = $page_count;
 
