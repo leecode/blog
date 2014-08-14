@@ -84,7 +84,6 @@ class Comments_Model extends Model {
 			$sql .= " limit $offset, $limit";
 		}
 
-		error_log('LEECODE_DEBUG >>>>>>>>>>>>>>>' . $sql);
 		$result = $this->db->query($sql);
 
 		if(!$is_count) {
