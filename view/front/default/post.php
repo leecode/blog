@@ -32,6 +32,18 @@
             <ul class="blog-post-meta">
               <li><?php echo Commons::timeToDate($post['created']);?></li>
               <li>作者: Leecode</li>
+              <li>分类: 
+                <?php
+                  $count_of_cates = count($post['categories']);
+                  for($i = 0; $i < $count_of_cates; $i++) {
+                    $category = $post['categories'][$i];
+                    $show_comma = !($i == ($count_of_cates - 1));
+                ?>
+                    <a href="index.php?category=<?php echo $category['mid'];?>"><?php echo $category['name'];?></a><?php echo $show_comma ? ',' : '';?>
+                <?php
+                  }
+                ?>
+              </li>
             </ul>
             <?php echo $post['text'];?>
           </article><!-- /.blog-post -->

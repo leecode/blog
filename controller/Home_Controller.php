@@ -25,19 +25,31 @@ class Home_Controller extends Controller {
 		$post_count = $contents->list_contents(-1, -1, $q, true, $category);
 
 		Application::load_model('admin/comments');
+		Application::load_model('admin/metas');
+		Application::load_model('admin/relationships');
+
 		$comments = $this->model('comments');
+		$metas = $this->model('metas');
+		$relationships = $this->model('relationships');
 
 		for($i = 0; $i < count($posts); $i++) {
 			$count_of_comments = $comments->list_by_cid($posts[$i]['cid'], -1, -1, '', true, false, false);
 			$posts[$i]['comment_count'] = $count_of_comments;
+
+			// 得到文章所属分类列表
+			$cate_ids = $relationships->get_category_ids_of_contents($posts[$i]['cid']);
+			$categories = array();
+			foreach ($cate_ids as $cate_id) {
+				$categories[] = $metas->get_by_mid($cate_id);
+			}
+
+			$posts[$i]['categories'] = $categories;
 		}
 
 		$page_count = (0 == (int)($post_count / FRONT_PAGE_SIZE)) ? 
 							(int)($post_count / FRONT_PAGE_SIZE) : 
 							(int)($post_count / FRONT_PAGE_SIZE) + 1;
 
-		Application::load_model('admin/metas');
-		$metas = $this->model('metas');
 		$cates = $metas->list_metas();
 
 		$params['categories'] = $cates;
@@ -72,7 +84,19 @@ class Home_Controller extends Controller {
 		}
 
 		Application::load_model('admin/metas');
+		Application::load_model('admin/relationships');
+
+		$relationships = $this->model('relationships');
 		$metas = $this->model('metas');
+
+		// 得到文章所属分类列表
+		$cate_ids = $relationships->get_category_ids_of_contents($params['cid']);
+		$categories = array();
+		foreach ($cate_ids as $cate_id) {
+			$categories[] = $metas->get_by_mid($cate_id);
+		}
+
+		$post['categories'] = $categories;
 		$cates = $metas->list_metas();
 
 		$params['categories'] = $cates;
