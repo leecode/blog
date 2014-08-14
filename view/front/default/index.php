@@ -76,30 +76,11 @@
         </div><!-- /.blog-main -->
 
         <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
-          <div class="sidebar-module sidebar-module-inset">
-            <h4>关于</h4>
-            <p>巫山不是云。</p>
-          </div>
-          <div class="sidebar-module">
-            <h4>分类</h4>
-            <ol class="list-unstyled">
-              <?php
-                foreach ($categories as $cate) {
-              ?>
-                <li><a href="index.php?category=<?php echo $cate['mid'];?>"><?php echo $cate['name'];?></a>(<?php echo $cate['count'];?>)</li>
-              <?php 
-                }
-              ?>
-            </ol>
-          </div>
-          <div class="sidebar-module">
-            <h4>Elsewhere</h4>
-            <ol class="list-unstyled">
-              <li><a href="https://github.com/leecode/blog">GitHub</a></li>
-              <li><a href="#">Twitter</a></li>
-              <li><a href="#">Facebook</a></li>
-            </ol>
-          </div>
+          <?php
+            include_once 'about.php';
+            include_once 'categories.php';
+            include_once 'elsewhere.php';
+          ?>
         </div><!-- /.blog-sidebar -->
 
       </div><!-- /.row -->

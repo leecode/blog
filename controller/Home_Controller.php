@@ -71,6 +71,11 @@ class Home_Controller extends Controller {
 			$comments_of_post[$index]['sub-comments'] = $sub_comments;
 		}
 
+		Application::load_model('admin/metas');
+		$metas = $this->model('metas');
+		$cates = $metas->list_metas();
+
+		$params['categories'] = $cates;
 		$params['post'] = $post;
 		$params['comments'] = $comments_of_post;
 		$params['comments_count'] = $count_of_comments;
