@@ -19,6 +19,52 @@ class Metas_Model extends Model {
 		return $this->db->insert_id();
 	}
 
+	public function increse_count() {
+		if(empty($this->attributes['mid'])) {
+			error_log("Trying to increse count to category with no mid");
+			return false;
+		}
+		// 只更新
+		if('category' == $this->attributes['type']) {
+			$sql = 'update ' . $this->table('metas') . ' set count = count + 1 where mid = ' . $this->attributes['mid'];
+
+			$this->db->query($sql);
+		}
+	}
+
+	public function decrese_count() {
+		if(empty($this->attributes['mid'])) {
+			error_log("Trying to decrese count to category with no mid");
+			return false;
+		}
+		// 只更新
+		if('category' == $this->attributes['type']) {
+			$sql = 'update ' . $this->table('metas') . ' set count = count - 1 where count > 0 and mid = ' . $this->attributes['mid'];
+
+			$this->db->query($sql);
+		}	
+	}
+
+	public function decrese_count_batch($mids) {
+		if(empty($mids)) {
+			error_log('Trying to descres count to categories with no mids specified.');
+			return false;
+		}
+
+		$sql = 'update ' . $this->table('metas') . ' set count = count - 1 where count > 0 and mid in (' . $mids . ')';
+		$this->db->query($sql);
+	}
+
+	public function increse_count_batch($mids) {
+		if(empty($mids)) {
+			error_log('Trying to increse count to categories with no mids specified.');
+			return false;
+		}
+
+		$sql = 'update ' . $this->table('metas') . ' set count = count + 1 where mid in (' . $mids . ')';
+		$this->db->query($sql);
+	}
+
 	public function get_by_mid($mid) {
 		if(empty($mid)) {
 			return false;

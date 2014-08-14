@@ -61,6 +61,7 @@ class Contents_Controller extends Controller {
 
         Application::load_model('admin/metas');
         $metas = $this->model('metas');
+
         $tag_ids = array();
 
         foreach ($tags as $tag) {
@@ -73,20 +74,35 @@ class Contents_Controller extends Controller {
             $tag_ids[] = $tag_id;
         }
 
-        $category_ids = array_merge($category_ids, $tag_ids);
+        $meta_ids = array_merge($category_ids, $tag_ids);
 
         Application::load_model('admin/relationships');
         // 先删除所有的relationships
         $relationships = $this->model('relationships');
         $relationships->cid = 0 == $cid ? $contents->cid : $cid;
-        $relationships->delete();
 
+        // 处理文章分类中的文章总数。
+        // 先将文章之前所属的分类中的文章数量全部减1，之后再把文章现在所属的各个分类的文章数量加1.
+        $former_cate_ids = $relationships->get_category_ids_of_contents($relationships->cid);
+
+        $metas->type = 'category';
+        foreach ($former_cate_ids as $cate_id) {
+            $metas->mid = $cate_id;
+            $metas->decrese_count();
+        }
+
+        foreach ($category_ids as $cate_id) {
+            $metas->mid = $cate_id;
+            $metas->increse_count();
+        }
+        // 处理文章分类中的文章总数记录结束。
+
+        $relationships->delete();
         // 重新创建relationships
-        foreach ($category_ids as $cate) {
+        foreach ($meta_ids as $cate) {
             $relationships->mid = $cate;
             $relationships->save();
         }
-
         // Should forward to post manage page.
         Commons::forward('admin/index.php?controller=contents&action=show');
     }
@@ -114,9 +130,12 @@ class Contents_Controller extends Controller {
          
         $contents_list = $contents->list_contents(($page - 1) * $page_size, $page_size, $q_title, false, $category);
         $total = $contents->list_contents(-1, -1, $q_title, true, $category);
+
+        // 用于分页显示
         $params['contents_list'] = $contents_list;
         $params['total'] = $total;
         $params['page_size'] = $page_size;
+        $params['page'] = $page;
 
         Application::load_model('admin/metas');
 
@@ -135,8 +154,28 @@ class Contents_Controller extends Controller {
         $result = array('success' => false);
 
         $contents = $this->model('contents');
-
         $contents->delete_batch($cids);
+
+        // 处理post-meta之间的关系
+        Application::load_model('admin/relationships');
+        Application::load_model('admin/metas');
+
+        $relationships = $this->model('relationships');
+        $metas = $this->model('metas');
+
+        $post_ids = explode(',', $cids);
+        foreach ($post_ids as $post_id) {
+            $cate_ids = $relationships->get_category_ids_of_contents($post_id);
+            $mids = implode(',', $cate_ids);
+
+            // 处理文章分类
+            $metas->decrese_count_batch($mids);
+
+            // 处理relationships
+            $relationships->cid = $post_id;
+            $relationships->delete();
+        }
+
         $result['success'] = true;
         
         $json_str = json_encode($result);
