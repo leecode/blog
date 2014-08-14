@@ -131,6 +131,15 @@ class Contents_Controller extends Controller {
         $contents_list = $contents->list_contents(($page - 1) * $page_size, $page_size, $q_title, false, $category);
         $total = $contents->list_contents(-1, -1, $q_title, true, $category);
 
+
+        Application::load_model('admin/comments');
+        $comments = $this->model('comments');
+
+        for($i = 0; $i < count($contents_list); $i++) {
+            $count_of_comments = $comments->list_by_cid($contents_list[$i]['cid'], -1, -1, '', true, false, false);
+            $contents_list[$i]['comment_count'] = $count_of_comments;
+        }
+
         // 用于分页显示
         $params['contents_list'] = $contents_list;
         $params['total'] = $total;

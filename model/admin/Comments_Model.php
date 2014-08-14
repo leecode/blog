@@ -54,20 +54,25 @@ class Comments_Model extends Model {
 	 * @param $cid 文章id
 	 * @param $is_count 是否为获取评论总数， 默认为false，即获取评论列表
 	 */
-	public function list_by_cid($cid, $offset = 0, $limit = 10, $q = '', $is_count = false, $is_manage = false) {
+	public function list_by_cid($cid, $offset = 0, $limit = 10, $q = '', $is_count = false, $is_manage = false, $not_nested = true) {
 		$sql = null;
 
 		$comment_table = $this->table('comments');
 
+		$no_nested = '';
+		if($not_nested) {
+			$no_nested = ' and comment.parent = 0';
+		}
+
 		if(!$is_count) {
 			if($is_manage) {
 				$sql = 'select comment.coid, comment.cid, comment.created, comment.text, comment.parent, content.title post_title from '
-						. $comment_table . ' as comment, ' . $this->table('contents') . ' as content where comment.cid = content.cid and comment.parent = 0 ';
+						. $comment_table . ' as comment, ' . $this->table('contents') . ' as content where comment.cid = content.cid ' . $no_nested;
 			} else {
-				$sql = 'select coid, cid, created, text, parent from ' . $comment_table . ' as comment where parent = 0 ';	
+				$sql = 'select coid, cid, created, text, parent from ' . $comment_table . ' as comment where 1=1 ' . $no_nested;	
 			}
 		} else {
-			$sql = 'select count(1) total from ' . $comment_table . ' as comment where 1=1 and parent = 0';
+			$sql = 'select count(1) total from ' . $comment_table . ' as comment where 1=1 ' . $no_nested;
 		}
 		
 		if(!empty($cid) && is_numeric($cid) &&!$is_manage) {

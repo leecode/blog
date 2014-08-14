@@ -74,7 +74,7 @@
               foreach ($contents_list as $contents_item) {
             ?>
             <tr>
-              <td><input type="checkbox" class="content_id" name="cid" value="<?php echo $contents_item['cid'];?>"/><span></span><a href="#">0</a></td>
+              <td><input type="checkbox" class="content_id" name="cid" value="<?php echo $contents_item['cid'];?>"/><span></span><a href="#"><?php echo $contents_item['comment_count'];?></a></td>
               <td><?php echo $contents_item['cid']; ?></td>
               <td><a href="<?php echo $list_page_url . '?controller=contents&action=write_post&cid=' . $contents_item['cid'];?>"><?php echo $contents_item['title']; ?></a></td>
               <td><?php echo $contents_item['author_id']; ?></td>

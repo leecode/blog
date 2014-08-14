@@ -41,7 +41,7 @@
             <ul class="blog-post-meta">
               <li><?php echo Commons::timeToDate($post_item['created']);?></li>
               <li>作者: Leecode</li>
-              <li><a href="index.php?cid=<?php echo $post_item['cid'];?>&action=details">评论</a></li>
+              <li><a href="index.php?cid=<?php echo $post_item['cid'];?>&action=details">评论</a>(<?php echo $post_item['comment_count'];?>)</li>
             </ul>
             <?php echo $post_item['text'];?>
           </article><!-- /.blog-post -->

@@ -16,8 +16,8 @@ class Comments_Controller extends Controller {
         }
 
 		$comments = $this->model('comments');
-		$comment_list = $comments->list_by_cid(null, ($page - 1) * $page_size, $page_size, $q, false, true);
-		$comments_count = $comments->list_by_cid(null, -1, -1, $q, true, true);
+		$comment_list = $comments->list_by_cid(null, ($page - 1) * $page_size, $page_size, $q, false, true, false);
+		$comments_count = $comments->list_by_cid(null, -1, -1, $q, true, true, false);
 
 		$params['comments'] = $comment_list;
 		$params['page_size'] = $page_size;

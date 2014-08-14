@@ -24,6 +24,14 @@ class Home_Controller extends Controller {
 		$posts = $contents->list_contents(($page - 1) * FRONT_PAGE_SIZE, FRONT_PAGE_SIZE, $q, false, $category);
 		$post_count = $contents->list_contents(-1, -1, $q, true, $category);
 
+		Application::load_model('admin/comments');
+		$comments = $this->model('comments');
+
+		for($i = 0; $i < count($posts); $i++) {
+			$count_of_comments = $comments->list_by_cid($posts[$i]['cid'], -1, -1, '', true, false, false);
+			$posts[$i]['comment_count'] = $count_of_comments;
+		}
+
 		$page_count = (0 == (int)($post_count / FRONT_PAGE_SIZE)) ? 
 							(int)($post_count / FRONT_PAGE_SIZE) : 
 							(int)($post_count / FRONT_PAGE_SIZE) + 1;
