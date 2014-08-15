@@ -123,6 +123,10 @@ class MySQL {
 	function get_charset() {
 		return mysqli_get_charset($this->conn);
 	}
+
+	function real_escape_string($escape_str) {
+		return mysqli_real_escape_string($this->conn, $escape_str);
+	}
 }
 
 ?>
