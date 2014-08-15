@@ -11,9 +11,21 @@
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Control Panel</a></li>
-            <li><a href="action=add_post">Add Post</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">撰写<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="./index.php?controller=contents&action=write_post">文章</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">管理 <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="./index.php?controller=contents&action=show">文章</a></li>
+                <li><a href="./index.php?controller=comments">评论</a></li>
+                <li><a href="./index.php?controller=metas&action=show">分配和标签</a></li>
+              </ul>
+            </li>
+            <li><a href="#">设置</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
