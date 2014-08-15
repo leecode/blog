@@ -53,7 +53,7 @@
           	if(is_array($comments) && 0 < count($comments)) {
           ?>
 	          <div class="comments">
-	          	<h4>已有<?php echo $comments_count;?>条评论</h4>
+	          	<h4>已有<?php echo $all_comments_count;?>条评论</h4>
 	          	<ol class="comment-list">
 	          <?php
 		          foreach ($comments as $comment_item) {
