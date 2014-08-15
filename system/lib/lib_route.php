@@ -13,7 +13,7 @@ final class Route {
 		if(false === strpos($query['query'], $query_string)) {
 			// 针对POST请求作出相应的处理。
 			if('POST' === $_SERVER['REQUEST_METHOD']) {
-				$query_string = $this->to_query_str($_POST) . '&' . $query_string;
+				$query_string = $query_string . '&' . $this->to_query_str($_POST);
 			}
 			$to_parse = '?' . $query_string;
 			if(!empty($query['query'])) {
