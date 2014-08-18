@@ -38,5 +38,19 @@ final class Commons {
 	public static function timeToDate($time, $format = 'F j, Y') {
 		return date($format, $time);
 	}
+
+	public static function has_user_logged_in() {
+		session_start();
+
+		// if user was not logged in , try to log in by cookie.
+		if(!isset($_SESSION['user_id'])) {
+			if(isset($_COOKIE['user_id']) && isset($_COOKIE['username'])) {
+				$_SESSION['user_id'] = $_COOKIE['user_id'];
+				$_SESSION['username'] = $_COOKIE['username'];
+			}
+		}
+
+		return isset($_SESSION['user_id']);
+	}
 }
 ?>

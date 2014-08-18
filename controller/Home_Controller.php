@@ -8,6 +8,9 @@ class Home_Controller extends Controller {
 	 * 博客前台首页
 	 */
 	public function index() {
+		if(!Commons::has_user_logged_in()) {
+			Commons::forward('index.php?controller=login&action=login');
+		}
 		$params = func_get_arg(0);
 		Application::load_model('admin/contents');
 
