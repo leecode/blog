@@ -8,11 +8,10 @@ class Login_Controller extends Controller {
 	public function do_login() {
 		$params = func_get_arg(0);
 
-
 		$username = $params['username'];
 		$password = $params['password'];
 
-		if('leecode' != $username || 'leecode' != $password) {
+		if('leecode' != $username || md5('leecode') != md5($password)) {
 			Commons::forward('index.php?controller=login&action=login');
 		}
 	}

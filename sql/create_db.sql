@@ -35,3 +35,17 @@ CREATE TABLE `app_comments` (
    KEY `cid` (`cid`),
    KEY `created` (`created`)
  ) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `app_users` (
+   `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+   `name` varchar(32) DEFAULT NULL,
+   `password` varchar(64) DEFAULT NULL,
+   `mail` varchar(200) DEFAULT NULL,
+   `url` varchar(200) DEFAULT NULL,
+   `screenName` varchar(32) DEFAULT NULL,
+   `created` int(10) unsigned DEFAULT '0',
+   `activated` int(10) unsigned DEFAULT '0',
+   PRIMARY KEY (`uid`),
+   UNIQUE KEY `name` (`name`),
+   UNIQUE KEY `mail` (`mail`)
+ ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
