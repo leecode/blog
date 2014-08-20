@@ -9,8 +9,8 @@ class User_Model extends Model {
 					. $this->attributes['mail'] . '", "' . $this->attributes['screenName'] . '",' . $this->attributes['created']
 					. ', ' . $this->attributes['activated'] . ')';
 		} else {
-			$sql = 'update ' . $this->table('users') . ' set password = "' . md5($this->attributes['password']) . '"'
-					. ', mail = "' . $this->attributes['mail'] . '",screenName="' . $this->attributes['screenName'] . '"'
+			$sql = 'update ' . $this->table('users') . ' set '#password = "' . md5($this->attributes['password']) . '", '
+					. ' mail = "' . $this->attributes['mail'] . '",screenName="' . $this->attributes['screenName'] . '"'
 					. ' where uid = ' . $this->attributes['uid'];
 		}
 
@@ -35,8 +35,8 @@ class User_Model extends Model {
 	}
 
 	public function get_by_uid($uid) {
-		$sql = "select name, password, mail, screenName, created, activated from " 
-				. $this->table('users') . 'where uid = ' . $uid;
+		$sql = "select uid, name, password, mail, screenName, created, activated from " 
+				. $this->table('users') . ' where uid = ' . $uid;
 
 		$result = $this->db->query($sql);
 		$row = $this->db->fetch_array($result);
@@ -54,7 +54,7 @@ class User_Model extends Model {
 		$sort_part = 'order by created desc';
 
 		if(!empty($q_screenName)) {
-			$sql .= " and screenName like '%$q_screenName%'";
+			$sql .= " and (screenName like '%$q_screenName%' or name like '%$q_screenName%') ";
 		}
 
 		$sql .= " $sort_part ";
@@ -62,6 +62,7 @@ class User_Model extends Model {
 			$sql .= " limit $offset, $limit";
 		}
 
+		error_log('LEECODE_DEBUG : ' . $sql);
 		$result = $this->db->query($sql);
 
 		if(!$is_count) {

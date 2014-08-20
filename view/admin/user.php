@@ -20,14 +20,15 @@
 				<form class="form-horizontal user-form" action="index.php" method="post">
 					<input type="hidden" name="controller" value="user" />
 					<input type="hidden" name="action" value="add" />
+					<input type="hidden" name="uid" value="<?php echo $user['uid'];?>" />
 					<div class="form-group">
 						<label>用户名 *</label>
-						<input type="text" name="name" class="form-control"/>
+						<input type="text" name="name" class="form-control" value="<?php echo $user['name'];?>"/>
 						<p class="description">此用户名将作为用户登录时所用的名称.<br/>请不要与系统中现有的用户名重复.</p>
 					</div>
 					<div class="form-group">
 						<label>电子邮箱地址 *</label>
-						<input type="text" name="mail" class="form-control" />
+						<input type="text" name="mail" class="form-control" value="<?php echo $user['mail'];?>" />
 						<p class="description">
 							电子邮箱地址将作为此用户的主要联系方式.<br>
 							请不要与系统中现有的电子邮箱地址重复.
@@ -35,7 +36,7 @@
 					</div>
 					<div class="form-group">
 						<label>用户昵称</label>
-						<input type="text" name="screenName" class="form-control">
+						<input type="text" name="screenName" class="form-control" value="<?php echo $user['screenName'];?>">
 						<p class="description">
 							用户昵称可以与用户名不同, 用于前台显示.<br/>如果你将此项留空, 将默认使用用户名.
 						</p>
