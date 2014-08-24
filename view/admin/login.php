@@ -35,19 +35,67 @@
   <body>
      <div class="container">
 
-      <form class="form-signin" action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
+      <form id="login-form" class="form-signin" action="#" method="POST">
         <input type="hidden" name="controller" value="login" />
-        <input type="hidden" name="action" value="login" />
+        <input type="hidden" name="action" value="do_login" />
         <h2 class="form-signin-heading">登录</h2>
-        <input type="text" class="input-block-level" name="username" placeholder="用户名" value="<?php echo $username;?>">
-        <input type="password" class="input-block-level" name="password" placeholder="密码" value="<?php echo $password;?>">
+        <div>
+          <input type="text" class="input-block-level form-control" name="username" placeholder="用户名" value="<?php echo $username;?>">
+        </div>
+        <div>
+          <input type="password" class="input-block-level form-control" name="password" placeholder="密码" value="<?php echo $password;?>">
+        </div>
         <label class="checkbox">
-          <input type="checkbox" value="remember-me"> 记住我
+          <input type="checkbox" name="remember_me" value="remember-me"> 记住我
         </label>
-        <button class="btn btn-large btn-primary" name="submit" type="submit">登录</button>
+        <button class="btn btn-large btn-primary" name="submit" type="button" id="login_btn">登录</button>
       </form>
     </div>
     <?php
       include_once 'footer.php';
     ?>
+    <script type="text/javascript">
+      $(function() {
+        $('#login_btn').click(function() {
+          clearErrorMsg('username');
+          clearErrorMsg('password');
+
+          var url = 'index.php';
+
+          $.post(url, $('#login-form').serialize(), function(resoponse) {
+            if(resoponse.success) {
+              window.location = resoponse.url;
+              return;
+            } else {
+              var elementName = resoponse.elementName;
+              var errorMsg = resoponse.msg;
+
+              showErrorMsg(elementName, errorMsg);
+            }
+          }, 'json');
+
+          $('#login-form input').focus(function() {
+            clearErrorMsg(this.name);
+          });
+        });
+
+        function showErrorMsg(elemName, errorMsg) {
+          var selector = 'input[name="' + elemName + '"]';
+          var $parentDiv = $($(selector)[0]).parent();
+
+          var msgElem = '<span for="' + elemName + '" class="help-block">' + errorMsg + '</span>';
+          $parentDiv.append(msgElem);
+          $parentDiv.addClass('has-error');
+        }
+
+        function clearErrorMsg(elemName) {
+          var selector = 'input[name="' + elemName + '"]';
+          var $parentDiv = $($(selector)[0]).parent();
+
+          $($parentDiv.find('span')[0]).remove();
+          $parentDiv.removeClass('has-error');
+        }
+
+      });
+    </script>
   </body>

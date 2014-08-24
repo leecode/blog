@@ -44,6 +44,16 @@ class User_Model extends Model {
 		return $row;
 	}
 
+	public function get_by_name($name) {
+		$sql = "select uid, name, password, mail, screenName, created, activated from " 
+				. $this->table('users') . ' where name = "' . $name . '"';
+
+		$result = $this->db->query($sql);
+		$row = $this->db->fetch_array($result);
+
+		return $row;
+	}
+
 	public function get_users($offset = 0, $limit = 10, $q_screenName = '', $is_count = false) {
 		$query_cols = 'uid, name, screenName, mail, created, activated';
 		if($is_count) {
@@ -62,7 +72,6 @@ class User_Model extends Model {
 			$sql .= " limit $offset, $limit";
 		}
 
-		error_log('LEECODE_DEBUG : ' . $sql);
 		$result = $this->db->query($sql);
 
 		if(!$is_count) {

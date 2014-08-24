@@ -3,7 +3,6 @@
 ?>
 <body>
 	<?php include_once 'menu.php';?>
-	中文的hello。
 </body>
 <?php
 	include_once 'footer.php';
