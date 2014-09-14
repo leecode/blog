@@ -15,6 +15,11 @@ class MySQL {
 	 */
 	private $result;
 
+	/**
+	 * 内置mysqli_stmt对象
+	 */
+	private $stmt;
+
 	/*
 	 * 内置实例对象
 	*/
@@ -127,6 +132,133 @@ class MySQL {
 	function real_escape_string($escape_str) {
 		return mysqli_real_escape_string($this->conn, $escape_str);
 	}
+
+	function get_conn() {
+		return $this->conn;
+	}
+	/**
+	 * New APIs for using mysqli prepared statment.
+	 */
+	function stmt_init() {
+		$this->stmt = mysqli_stmt_init($this->conn);
+		return $this->stmt;
+	}
+
+	function prepare($sql) {
+		mysqli_stmt_prepare($this->stmt, $sql);
+	}
+
+	function bind_params() {
+		$args_count = func_num_args();
+		$args = func_get_args();
+		$func_params = array($this->stmt);
+		// Arguments is DBParams instantce
+		if(1 == $args_count && $args[0] instanceof DBParams) {
+			$func_params = array_merge($func_params, $args[0]->parse());
+		} else {
+			$types = $args[0];
+			$values = $args[1];
+			$db_params = array_merge(array($types), $values);
+			$func_params = array_merge($func_params, $db_params);
+		}
+		
+		call_user_func_array('mysqli_stmt_bind_param', $func_params);
+	}
+
+
+	function stmt_execute() {
+		mysqli_stmt_execute($this->stmt);
+	}
+
+	function stmt_fetch_array() {
+		$metadata = mysqli_stmt_result_metadata($this->stmt);
+
+		$fieldNames = array(&$this->stmt);
+
+		$obj = new stdClass();
+		while($field = mysqli_fetch_field($metadata)) {
+			$fieldName = $field->name;
+			$fieldNames[] = &$obj->$fieldName;	// Pass reference, so $obj can be updated.
+		}
+
+		call_user_func_array('mysqli_stmt_bind_result', $fieldNames);
+
+		$result_obj = array();
+		mysqli_stmt_execute($this->stmt);
+		$i = 0;
+		while(mysqli_stmt_fetch($this->stmt)) {
+			foreach ($obj as $key => $value) {
+				$result_obj[$i][$key] = $value;
+			}
+			$i++;
+		}
+
+		return $result_obj;
+	}
+
+	/**
+	 * Fetch object or object array.
+	 * If there are multiple rows in result, return an array of objects, otherwise an object with table columns as properties
+	 */
+	function stmt_fetch_object() {
+		$metadata = mysqli_stmt_result_metadata($this->stmt);
+
+		$fieldNames = array(&$this->stmt);
+
+		$obj = new stdClass();
+		while($field = mysqli_fetch_field($metadata)) {
+			$fieldName = $field->name;
+			$fieldNames[] = &$obj->$fieldName;
+		}
+
+		call_user_func_array('mysqli_stmt_bind_result', $fieldNames);
+
+		$result_obj = array();
+		mysqli_stmt_execute($this->stmt);
+		$i = 0;
+		while(mysqli_stmt_fetch($this->stmt)) {
+			$row = new stdClass();
+
+			// Can not use $result_obj[] = $obj directly, seems has something to do with array reference, not sure about that.
+			foreach ($obj as $prop => $value) {
+				$row->$prop = $value;
+			}
+			$result_obj[] = $row;
+		}
+
+
+
+		return $result_obj;
+	}
+
+	function stmt_close() {
+		mysqli_stmt_close($this->stmt);
+	}
 }
 
+/**
+ * Util class for binding params of prepared statement.
+ */
+class DBParams {
+	/**
+	 * types finally would be like 'sids', which indicates types of four params, 
+	 * type of whom are 'string', 'int', 'double' and 'string'.
+	 */
+	private $types = '';
+	private $values = array();
+
+	/**
+	 * Add param together with its type.
+	 * @param $type  type of param, must be a valid one, reference mysqli_stmt::bind_param.
+	 * @param $value value of param.
+	 */
+	public function add($type, $value) {
+		$this->values[] = $value;
+		$this->types .= $type;
+	}
+
+	public function parse() {
+		return array_merge(array($this->types), $this->values);
+	}
+}
 ?>
