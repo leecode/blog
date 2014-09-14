@@ -118,6 +118,7 @@ class Home_Controller extends Controller {
 	 * 处理评论请求
 	 */
 	public function comment() {
+		session_start();
 		$params = func_get_arg(0);
 
 		Application::load_model('admin/comments');
@@ -128,6 +129,7 @@ class Home_Controller extends Controller {
 		$comments->parent = empty($params['parent']) ? 0 : $params['parent'];
 		$comments->sub_parent = empty($params['sub_parent']) ? 0 : $params['sub_parent'];
 		$comments->created = time();
+		$comments->author_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
 
 		$comments->save();
 

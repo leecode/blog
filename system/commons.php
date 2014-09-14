@@ -52,5 +52,11 @@ final class Commons {
 
 		return isset($_SESSION['user_id']);
 	}
+
+	public static function get_loggedin_user_id() {
+		session_start();
+
+		return $_SESSION['user_id'];
+	}
 }
 ?>

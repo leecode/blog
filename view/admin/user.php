@@ -12,6 +12,11 @@
 	    color: #999;
 	    font-size: .92857em;
 	}
+
+	label.required:after {
+		content: " *";
+		color: #C00;
+	}
 </style>
 <body>
 	<div class="container-fluid">
@@ -22,12 +27,12 @@
 					<input type="hidden" name="action" value="add" />
 					<input type="hidden" name="uid" value="<?php echo $user['uid'];?>" />
 					<div class="form-group">
-						<label>用户名 *</label>
+						<label class="required">用户名</label>
 						<input type="text" name="name" class="form-control" value="<?php echo $user['name'];?>"/>
 						<p class="description">此用户名将作为用户登录时所用的名称.<br/>请不要与系统中现有的用户名重复.</p>
 					</div>
 					<div class="form-group">
-						<label>电子邮箱地址 *</label>
+						<label class="required">电子邮箱地址</label>
 						<input type="text" name="mail" class="form-control" value="<?php echo $user['mail'];?>" />
 						<p class="description">
 							电子邮箱地址将作为此用户的主要联系方式.<br>
@@ -42,14 +47,14 @@
 						</p>
 					</div>
 					<div class="form-group">
-						<label>用户密码 *</label>
+						<label class="required">用户密码</label>
 						<input type="password" name="password" class="form-control">
 						<p class="description">
 							为此用户分配一个密码.<br/>建议使用特殊字符与字母的混编样式,以增加系统安全性.
 						</p>
 					</div>
 					<div class="form-group">
-						<label>确认密码 *</label>
+						<label class="required">确认密码</label>
 						<input type="password" name="confirm" class="form-control">
 						<p class="description">
 							请确认你的密码, 与上面输入的密码保持一致.

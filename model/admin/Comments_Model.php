@@ -8,9 +8,9 @@ class Comments_Model extends Model {
 
 		$table = $this->table('comments');
 
-		$sql = 'insert into ' . $table . ' (cid, created, text, parent, sub_parent) values(' . $this->attributes['cid']
+		$sql = 'insert into ' . $table . ' (cid, created, text, parent, sub_parent, author_id) values(' . $this->attributes['cid']
 			   . ', ' . $this->attributes['created'] . ', "'
-			   . $this->attributes['text'] . '", ' . $this->attributes['parent'] . ',' . $this->attributes['sub_parent'] .')';
+			   . $this->attributes['text'] . '", ' . $this->attributes['parent'] . ',' . $this->attributes['sub_parent'] .', ' . $this->attributes['author_id'] . ')';
 
 		$this->db->query($sql);
 		return $this->db->insert_id();
@@ -66,7 +66,7 @@ class Comments_Model extends Model {
 
 		if(!$is_count) {
 			if($is_manage) {
-				$sql = 'select comment.coid, comment.cid, comment.created, comment.text, comment.parent, content.title post_title from '
+				$sql = 'select comment.coid, comment.cid, comment.created, comment.text, comment.parent, comment.author_id, content.title post_title from '
 						. $comment_table . ' as comment, ' . $this->table('contents') . ' as content where comment.cid = content.cid ' . $no_nested;
 			} else {
 				$sql = 'select coid, cid, created, text, parent from ' . $comment_table . ' as comment where 1=1 ' . $no_nested;	

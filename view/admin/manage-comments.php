@@ -76,12 +76,13 @@
               <td valign="top" class="comment-head">
                   <div class="comment-meta">
                       <strong class="comment-author">
-                        <a href="http://www.typecho.org" rel="external nofollow" target="_blank">admin</a>
+                        <a href="http://www.typecho.org" rel="external nofollow" target="_blank"><?php echo $comment_item['author']['name'];?></a>
                       </strong><br>
                       <span>
-                        <a href="mailto:xiaoliang.leecode@gmail.com" target="_blank">xiaoliang.leecode@gmail.com</a>
-                      </span><br>
-                      <span>127.0.0.1</span>
+                        <a href="mailto:xiaoliang.leecode@gmail.com" target="_blank"><?php echo $comment_item['author']['mail'];?></a>
+                      </span>
+                      <!-- <br> -->
+                      <!-- <span>127.0.0.1</span> -->
                   </div>
               </td>
               <td valign="top" class="comment-body">

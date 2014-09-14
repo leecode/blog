@@ -41,8 +41,9 @@ class Contents_Controller extends Controller {
         $contents->cid = $cid;
         $contents->title = $params['title'];
         $contents->text = $this->get_input('text'); // 此处不能使用$params['text'], parse_url会将不合法的字符用'_'代替。
-        $contents->author_id = isset($params['author_id']) &&
-                               is_numeric($params['author_id']) ? $params['author_id'] : -1;
+        // $contents->author_id = isset($params['author_id']) &&
+        //                        is_numeric($params['author_id']) ? $params['author_id'] : -1;
+        $contents->author_id = Commons::get_loggedin_user_id();
 
         if(!empty($cid) && is_numeric($cid)) {
             $contents->modified = time();
@@ -135,9 +136,16 @@ class Contents_Controller extends Controller {
         Application::load_model('admin/comments');
         $comments = $this->model('comments');
 
+        Application::load_model('admin/user');
+        $user_mgr = $this->model('user');
+
         for($i = 0; $i < count($contents_list); $i++) {
             $count_of_comments = $comments->list_by_cid($contents_list[$i]['cid'], -1, -1, '', true, false, false);
+            $user = $user_mgr->get_by_uid($contents_list[$i]['author_id']);
+
             $contents_list[$i]['comment_count'] = $count_of_comments;
+            $contents_list[$i]['author'] = $user;
+
         }
 
         // 用于分页显示

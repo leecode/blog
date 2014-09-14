@@ -19,6 +19,17 @@ class Comments_Controller extends Controller {
 		$comment_list = $comments->list_by_cid(null, ($page - 1) * $page_size, $page_size, $q, false, true, false);
 		$comments_count = $comments->list_by_cid(null, -1, -1, $q, true, true, false);
 
+		Application::load_model('admin/user');
+		$user_mgr = $this->model('user');
+		for($i = 0; $i < count($comment_list); $i++) {
+			$user = $user_mgr->get_by_uid($comment_list[$i]['author_id']);
+			if(is_null($user)) {
+				$user = array('name' => '游客');
+			}
+			$comment_list[$i]['author'] = $user;
+		}
+
+
 		$params['comments'] = $comment_list;
 		$params['page_size'] = $page_size;
 		$params['page'] = $page;
@@ -53,6 +64,7 @@ class Comments_Controller extends Controller {
 		$comments->text = $this->get_input('text');
 		$comments->parent = empty($params['parent']) ? 0 : $params['parent'];
 		$comments->created = time();
+		$comments->author_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
 
 		$comments->save();
 
