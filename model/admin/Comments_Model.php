@@ -8,11 +8,22 @@ class Comments_Model extends Model {
 
 		$table = $this->table('comments');
 
-		$sql = 'insert into ' . $table . ' (cid, created, text, parent, sub_parent, author_id) values(' . $this->attributes['cid']
-			   . ', ' . $this->attributes['created'] . ', "'
-			   . $this->attributes['text'] . '", ' . $this->attributes['parent'] . ',' . $this->attributes['sub_parent'] .', ' . $this->attributes['author_id'] . ')';
+		$sql = 'insert into ' . $table . ' (cid, created, text, parent, sub_parent, author_id) values(?, ?, ?, ?, ?, ?)';
 
-		$this->db->query($sql);
+		$this->db->stmt_init();
+		$this->db->prepare($sql);
+
+		$db_params = new DBParams();
+		$db_params->add('i', $this->cid);
+		$db_params->add('i', $this->created);
+		$db_params->add('s', $this->text);
+		$db_params->add('i', $this->parent);
+		$db_params->add('i', $this->sub_parent);
+		$db_params->add('i', $this->author_id);
+
+		$this->db->bind_params($db_params);
+		$this->db->stmt_execute();
+		$this->db->stmt_close();
 		return $this->db->insert_id();
 	}
 
@@ -23,9 +34,14 @@ class Comments_Model extends Model {
 		$sql = null;
 		$table = $this->table('comments');
 
-		$sql = 'delete from ' . $table . ' where coid = ' . $this->attributes['coid'];
+		$sql = 'delete from ' . $table . ' where coid = ?' . $this->attributes['coid'];
 
-		$this->db->query($sql);
+		$this->db->stmt_init();
+		$this->db->prepare($sql);
+
+		$this->db->bind_params('i', $this->coid);
+		$this->db->stmt_execute();
+		$this->db->stmt_close();
 	}
 
 	/**
@@ -33,8 +49,14 @@ class Comments_Model extends Model {
 	 */
 	public function delete_batch($coids) {
 		if(!empty($coids)) {
-			$sql = 'delete from ' . $this->table('comments') . ' where coid in (' . $coids . ')';
-			$this->db->query($sql);
+			$sql = 'delete from ' . $this->table('comments') . ' where coid in (?)';
+
+			$this->db->stmt_init();
+			$this->db->prepare($sql);
+
+			$this->db->bind_params('s', $coids);
+			$this->db->stmt_execute();
+			$this->db->stmt_close();
 		}
 	}
 
@@ -44,8 +66,13 @@ class Comments_Model extends Model {
 	 */
 	public function delete_by_cid($cid) {
 		if(!empty($cid) && is_numeric($cid)) {
-			$sql = 'delete from ' . $this->table('comments') . ' where cid = ' . $cid;
-			$this->db->query($sql);
+			$sql = 'delete from ' . $this->table('comments') . ' where cid = ?';
+
+			$this->db->stmt_init();
+			$this->db->prepare($sql);
+			$this->db->bind_params('i', $cid);
+			$this->db->stmt_execute();
+			$this->db->stmt_close();
 		}
 	}
 
@@ -56,6 +83,7 @@ class Comments_Model extends Model {
 	 */
 	public function list_by_cid($cid, $offset = 0, $limit = 10, $q = '', $is_count = false, $is_manage = false, $not_nested = true) {
 		$sql = null;
+		$db_params = new DBParams();
 
 		$comment_table = $this->table('comments');
 
@@ -76,31 +104,34 @@ class Comments_Model extends Model {
 		}
 		
 		if(!empty($cid) && is_numeric($cid) &&!$is_manage) {
-			$sql .= ' and cid = ' . $cid;
+			$sql .= ' and cid = ?';
+			$db_params->add('i', $cid);
 		}
 
 		if(!empty($q)) {
-			$sql .= ' and comment.text like "%' . $q . '%" ';
+			$sql .= ' and comment.text like ?';
+			$db_params->add('s', "%$q%");
 		}
 
 		$sql .= ' order by created desc';
 
 		if(0 <= $offset) {
-			$sql .= " limit $offset, $limit";
+			$sql .= " limit ?, ?";
+			$db_params->add('i', $offset);
+			$db_params->add('i', $limit);
 		}
 
-		$result = $this->db->query($sql);
+		$this->db->stmt_init();
+		$this->db->prepare($sql);
+		$this->db->bind_params($db_params);
+
+		$result = $this->db->stmt_fetch_array();
+		$this->db->stmt_close();
 
 		if(!$is_count) {
-			$comments = array();
-			while($row = $this->db->fetch_array($result)) {
-				$comments[] = $row;
-			}
-
-			return $comments;
+			return $result;
 		} else {
-			$row = $this->db->fetch_array($result);
-			$total = $row['total'];
+			$total = $result[0]['total'];
 
 			return $total;
 		}
@@ -111,22 +142,24 @@ class Comments_Model extends Model {
 		$comment_table = $this->table('comments');
 
 		if(!$is_count) {
-			$sql = 'select coid, cid, created, text, parent from ' . $comment_table . ' as comment where parent = ' . $parent . ' order by created desc';	
+			$sql = 'select coid, cid, created, text, parent from ' . $comment_table . ' as comment where parent = ? order by created desc';	
 		} else {
-			$sql = 'select count(1) total from ' . $comment_table . ' as comment where parent = ' . $parent;
+			$sql = 'select count(1) total from ' . $comment_table . ' as comment where parent = ?';
 		}
 
-		$result = $this->db->query($sql);
+		$db_params = new DBParams();
+		$db_params->add('i', $parent);
+
+		$this->db->stmt_init();
+		$this->db->prepare($sql);
+		$this->db->bind_params($db_params);
+		$result = $this->db->stmt_fetch_array();
+		$this->db->stmt_close();
 
 		if(!$is_count) {
-			$comments = array();
-			while($row = $this->db->fetch_array($result)) {
-				$comments[] = $row;
-			}
-			return $comments;
+			return $result;
 		} else {
-			$row = $this->db->fetch_array($result);
-			return $row['total'];
+			return $result[0]['total'];
 		}
 		
 	}

@@ -31,7 +31,7 @@
               <input type="hidden" name="action" value="show" />
               <input type="hidden" name="page" value="<?php echo $page;?>" />
               <input type="hidden" name="page_size" value="<?php echo $page_size;?>" />
-              <input type="text" placeholder="请输入关键字" name="q" value="<?php echo $q;?>">
+              <input type="text" placeholder="请输入关键字" name="q" value="<?php echo urldecode($q);?>">
               <select name="category">
                 <option>所有分类</option>
                 <?php

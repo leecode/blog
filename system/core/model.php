@@ -32,7 +32,7 @@ class Model {
 
 	// Magic method.
 	public function __set($attr, $value) {
-		$this->attributes[$attr] = $this->db->real_escape_string($value);
+		$this->attributes[$attr] = $value;
 	}
 }
 ?>

@@ -158,6 +158,9 @@ class MySQL {
 		} else {
 			$types = $args[0];
 			$values = $args[1];
+			if(!is_array($values)) {
+				$values = array($values);
+			}
 			$db_params = array_merge(array($types), $values);
 			$func_params = array_merge($func_params, $db_params);
 		}
@@ -198,7 +201,6 @@ class MySQL {
 
 	/**
 	 * Fetch object or object array.
-	 * If there are multiple rows in result, return an array of objects, otherwise an object with table columns as properties
 	 */
 	function stmt_fetch_object() {
 		$metadata = mysqli_stmt_result_metadata($this->stmt);
@@ -225,8 +227,6 @@ class MySQL {
 			}
 			$result_obj[] = $row;
 		}
-
-
 
 		return $result_obj;
 	}

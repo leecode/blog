@@ -44,6 +44,9 @@ class Contents_Controller extends Controller {
         // $contents->author_id = isset($params['author_id']) &&
         //                        is_numeric($params['author_id']) ? $params['author_id'] : -1;
         $contents->author_id = Commons::get_loggedin_user_id();
+        if(empty($contents->author_id)) {
+            $contents->author_id = 0;
+        }
 
         if(!empty($cid) && is_numeric($cid)) {
             $contents->modified = time();
@@ -116,7 +119,7 @@ class Contents_Controller extends Controller {
 
         $page = $params['page'];
         $page_size = $params['page_size'];
-        $q = $params['q'];
+        $q = urldecode($params['q']);
         $category = $params['category'];
 
         if(empty($page) || !is_numeric($page)) {

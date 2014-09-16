@@ -1,11 +1,14 @@
 <?php
 class Comments_Controller extends Controller {
+	/**
+	 * 评论管理主页面
+	 */
 	public function index() {
 		$params = func_get_arg(0);
 
 		$page = $params['page'];
 		$page_size = $params['page_size'];
-		$q = $params['q'];
+		$q = urldecode($params['q']);
 
 		if(empty($page) || !is_numeric($page)) {
           $page = 1;
@@ -56,6 +59,9 @@ class Comments_Controller extends Controller {
         echo $json_str;
 	}
 
+	/**
+	 * 回复某条评论。
+	 */
 	public function reply() {
 		$params = func_get_arg(0);
 
