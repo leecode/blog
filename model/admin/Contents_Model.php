@@ -4,7 +4,9 @@ class Contents_Model extends Model {
 		$sql = null;
 		$table = $this->table('contents');
 		$db_params = new DBParams();
-		if(empty($this->attributes['cid'])) {
+
+		$cid = $this->cid;
+		if(!isset($cid) || 0 >= $cid) {
 			$sql = 'insert into ' . $table . ' (title, created, text, author_id) values (?, ?, ?, ?)';
 
 			$this->db->stmt_init();
@@ -72,15 +74,12 @@ class Contents_Model extends Model {
 
 	public function delete_batch($cids) {
 		if(!empty($cids)) {
-			$sql = 'delete from ' . $this->table('contents') . ' where cid in (?)';
+			$sql = 'delete from ' . $this->table('contents') . ' where cid in (' . $cids . ')';
 
 			$this->db->stmt_init();
 			$this->db->prepare($sql);
-			$db_params = new DBParams();
-			$db_params->add('s', $cids);
 
-			$this->db->bind_params($db_params);
-			$this->db->execute();
+			$this->db->stmt_execute();
 		} else {
 		}	
 	}

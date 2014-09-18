@@ -6,9 +6,6 @@ class Metas_Controller extends Controller {
 		$metas = $this->model('metas');
         $metas_list = $metas->list_metas($params['type']);
 
-        error_log(var_export($params, true));
-        error_log(var_export($metas_list, true));
-
         Application::load_model('admin/relationships');
         $relationships = $this->model('relationships');
         if('tag' != $params['type']) {
@@ -38,6 +35,8 @@ class Metas_Controller extends Controller {
 		$meta->meta_order = $params['meta_order'];
 		$meta->type = $params['type'];
 
+		error_log('LEECODE_DEBUG : meta in controller ----> ' . var_export($meta, true));
+
 		$meta->save();
 
 		$path = 'admin/index.php?controller=metas&action=show&type=' . $params['type'];
@@ -47,13 +46,13 @@ class Metas_Controller extends Controller {
 	public function delete() {
 		$params = func_get_arg(0);
         if(isset($params['mids']) && !empty($params['mids'])) {
-            $cids = $params['mids'];
+            $mids = $params['mids'];
         }
         $result = array('success' => false);
 
         $meta = $this->model('metas');
 
-        $meta->delete_batch($cids);
+        $meta->delete_batch($mids);
         $result['success'] = true;
         
         $json_str = json_encode($result);

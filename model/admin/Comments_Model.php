@@ -34,7 +34,7 @@ class Comments_Model extends Model {
 		$sql = null;
 		$table = $this->table('comments');
 
-		$sql = 'delete from ' . $table . ' where coid = ?' . $this->attributes['coid'];
+		$sql = 'delete from ' . $table . ' where coid = ?';
 
 		$this->db->stmt_init();
 		$this->db->prepare($sql);
@@ -49,12 +49,11 @@ class Comments_Model extends Model {
 	 */
 	public function delete_batch($coids) {
 		if(!empty($coids)) {
-			$sql = 'delete from ' . $this->table('comments') . ' where coid in (?)';
+			$sql = 'delete from ' . $this->table('comments') . ' where coid in (' . $coids . ')';
 
 			$this->db->stmt_init();
 			$this->db->prepare($sql);
 
-			$this->db->bind_params('s', $coids);
 			$this->db->stmt_execute();
 			$this->db->stmt_close();
 		}
