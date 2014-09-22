@@ -3,26 +3,49 @@ class User_Model extends Model {
 	public function save() {
 		$sql = null;
 
-		if(empty($this->attributes['uid'])) {
+		$db_params = new DBParams();
+		$uid = $this->uid;
+		if(!$uid) {
 			$sql = 'insert into ' . $this->table('users') . ' (name, password, mail, screenName, created, activated) '
-					. ' values("' . $this->attributes['name'] . '", "' . md5($this->attributes['password']) . '", "'
-					. $this->attributes['mail'] . '", "' . $this->attributes['screenName'] . '",' . $this->attributes['created']
-					. ', ' . $this->attributes['activated'] . ')';
+					. ' values (?, ?, ?, ?, ?, ?)';
+
+			$db_params->add('s', $this->name);
+			$db_params->add('s', $this->password);
+			$db_params->add('s', $this->mail);
+			$db_params->add('s', $this->screenName);
+			$db_params->add('i', $this->created);
+			$db_params->add('i', $this->activated);
+
 		} else {
-			$sql = 'update ' . $this->table('users') . ' set '#password = "' . md5($this->attributes['password']) . '", '
-					. ' mail = "' . $this->attributes['mail'] . '",screenName="' . $this->attributes['screenName'] . '"'
-					. ' where uid = ' . $this->attributes['uid'];
+			$sql = 'update ' . $this->table('users') . ' set mail = ?, screenName = ? where uid = ?';
+
+			$db_params->add('s', $this->mail);
+			$db_params->add('s', $this->screenName);
+			$db_params->add('i', $uid);
 		}
 
-		$this->db->query($sql);
+		$this->db->stmt_init();
+		$ready = $this->db->prepare($sql);
+		if($ready) {
+			$this->db->bind_params($db_params);
+			$this->db->stmt_execute();
+		}
+		$this->db->stmt_close();
+
 		return $this->db->insert_id();
 	}
 
 	public function delete() {
-		if(!empty($this->attributes['uid'])) {
-			$sql = 'delete from ' . $this->table('users') . ' where uid = ' . $this->attributes['uid'];
+		$uid = $this->uid;
+		if(!$uid) {
+			$sql = 'delete from ' . $this->table('users') . ' where uid = ?';
 
-			$this->db->query($sql);
+			$this->db->stmt_init();
+			$this->db->prepare($sql);
+			$this->db->bind_params('i', $uid);
+
+			$this->db->stmt_execute();
+			$this->db->stmt_close();
 		}
 	}
 
@@ -36,22 +59,28 @@ class User_Model extends Model {
 
 	public function get_by_uid($uid) {
 		$sql = "select uid, name, password, mail, screenName, created, activated from " 
-				. $this->table('users') . ' where uid = ' . $uid;
+				. $this->table('users') . ' where uid = ?';
 
-		$result = $this->db->query($sql);
-		$row = $this->db->fetch_array($result);
+		$this->db->stmt_init();
+		$this->db->prepare($sql);
+		$this->db->bind_params('i', $uid);
 
-		return $row;
+		$row = $this->db->stmt_fetch_array();
+		$this->db->stmt_close();
+		return $row[0];
 	}
 
 	public function get_by_name($name) {
 		$sql = "select uid, name, password, mail, screenName, created, activated from " 
-				. $this->table('users') . ' where name = "' . $name . '"';
+				. $this->table('users') . ' where name = ?';
 
-		$result = $this->db->query($sql);
-		$row = $this->db->fetch_array($result);
+		$this->db->stmt_init();
+		$this->db->prepare($sql);
+		$this->db->bind_params('s', $name);
+		$row = $this->db->stmt_fetch_array();
+		$this->db->stmt_close();
 
-		return $row;
+		return $row[0];
 	}
 
 	public function get_users($offset = 0, $limit = 10, $q_screenName = '', $is_count = false) {
@@ -63,27 +92,32 @@ class User_Model extends Model {
 		$sql = "select $query_cols from " . $this->table('users') . ' where 1=1';
 		$sort_part = 'order by created desc';
 
+		$db_params = new DBParams();
+
 		if(!empty($q_screenName)) {
-			$sql .= " and (screenName like '%$q_screenName%' or name like '%$q_screenName%') ";
+			$sql .= " and (screenName like ? or name like ?) ";
+			$q = '%' . $q_screenName . '%';
+			$db_params->add('s', $q);
+			$db_params->add('s', $q);
 		}
 
 		$sql .= " $sort_part ";
 		if($offset >= 0) {
-			$sql .= " limit $offset, $limit";
+			$sql .= " limit ?,?";
+			$db_params->add('i', $offset);
+			$db_params->add('i', $limit);
 		}
 
-		$result = $this->db->query($sql);
+		$this->db->stmt_init();
+		$this->db->prepare($sql);
+		$this->db->bind_params($db_params);
+		$result = $this->db->stmt_fetch_array();
+		$this->db->stmt_close();
 
 		if(!$is_count) {
-			$contents = array();
-			while($row = $this->db->fetch_array($result)) {
-				$contents[] = $row;
-			}
-
-			return $contents;
+			return $result;
 		} else {
-			$count_row = $this->db->fetch_array($result);
-			return $count_row['total'];
+			return $result[0]['total'];
 		}
 	}
 }

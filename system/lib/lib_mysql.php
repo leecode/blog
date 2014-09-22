@@ -145,13 +145,13 @@ class MySQL {
 	}
 
 	function prepare($sql) {
-		mysqli_stmt_prepare($this->stmt, $sql);
+		return mysqli_stmt_prepare($this->stmt, $sql);
 	}
 
 	function bind_params() {
 		$args_count = func_num_args();
 		$args = func_get_args();
-		$func_params = array($this->stmt);
+		$func_params = array(&$this->stmt);
 		// Arguments is DBParams instantce
 		if(1 == $args_count && $args[0] instanceof DBParams) {
 			$func_params = array_merge($func_params, $args[0]->parse());
@@ -164,7 +164,7 @@ class MySQL {
 			$db_params = array_merge(array($types), $values);
 			$func_params = array_merge($func_params, $db_params);
 		}
-		
+
 		call_user_func_array('mysqli_stmt_bind_param', $func_params);
 	}
 

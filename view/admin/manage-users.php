@@ -26,7 +26,7 @@
 		              <input type="hidden" name="controller" value="user" />
 		              <input type="hidden" name="page" value="<?php echo $page;?>" />
 		              <input type="hidden" name="page_size" value="<?php echo $page_size;?>" />
-		              <input type="text" placeholder="请输入关键字" name="q" value="<?php echo $q;?>">
+		              <input type="text" placeholder="请输入关键字" name="q" value="<?php echo urldecode($q);?>">
 		              <button type="submit" class="btn btn-default" id="search_btn" onclick="searchUsers();">筛选</button>
 		            </form>
 		          </div>

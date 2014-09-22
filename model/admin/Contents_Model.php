@@ -16,8 +16,6 @@ class Contents_Model extends Model {
 			$db_params->add('i', $this->created);
 			$db_params->add('s', $this->text);
 			$db_params->add('i', $this->author_id);
-
-			$this->db->bind_params($db_params);
 		} else {
 			$sql = 'update ' . $table . ' set title = ? , modified = ?, text = ? where cid = ?';
 
@@ -66,7 +64,8 @@ class Contents_Model extends Model {
 			$db_params->add('i', $this->cid);
 
 			$this->db->bind_params($db_params);
-			$this->db->execute();
+			$this->db->stmt_execute();
+			$this->db->stmt_close();
 		} else {
 
 		}
@@ -80,6 +79,7 @@ class Contents_Model extends Model {
 			$this->db->prepare($sql);
 
 			$this->db->stmt_execute();
+			$this->db->stmt_close();
 		} else {
 		}	
 	}

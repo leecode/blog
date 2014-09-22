@@ -13,7 +13,6 @@ class Metas_Model extends Model {
 
 		$this->db->stmt_init();
 		$this->db->prepare($sql);
-		error_log('DAMN, sql ' . $sql);
 
 		$db_params = new DBParams();
 		if($is_update) {

@@ -17,7 +17,7 @@ class User_Controller extends Controller {
           $page_size = 10;
         }
 
-        $q_screenName = trim($q_screenName);
+        $q_screenName = urldecode(trim($q_screenName));
 		$users = $user_mgr->get_users(($page - 1) * $page_size, $page_size, $q_screenName);
 		$total = $user_mgr->get_users(-1, -1, $q_screenName, true);
 
@@ -37,6 +37,7 @@ class User_Controller extends Controller {
 		$screen_name_empty = false;
 
 		$user_mgr->screenName = $params['screenName'];
+		$user_mgr->password = $params['password'];
 		$user_mgr->mail = $params['mail'];
 		$user_mgr->created = time();
 		$user_mgr->activated = 1;	// activated.
