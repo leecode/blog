@@ -70,7 +70,10 @@ class Comments_Controller extends Controller {
 		$comments->text = $this->get_input('text');
 		$comments->parent = empty($params['parent']) ? 0 : $params['parent'];
 		$comments->created = time();
-		$comments->author_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
+		$comments->author_id = Commons::get_loggedin_user_id();
+		if(!$comments->author_id) {
+			$comments->author_id = 0;
+		}
 
 		$comments->save();
 

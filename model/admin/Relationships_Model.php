@@ -65,9 +65,6 @@ class Relationships_Model extends Model {
 		$this->db->bind_params('i', $mid);
 
 		$this->db->stmt_fetch_array();
-
-		$result = $this->db->query($sql);
-		$row = $this->db->fetch_array($result);
 		$this->db->stmt_close();
 
 		return $row[0]['post_count'];

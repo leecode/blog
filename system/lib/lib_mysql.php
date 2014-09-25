@@ -164,6 +164,7 @@ class MySQL {
 			$db_params = array_merge(array($types), $values);
 			$func_params = array_merge($func_params, $db_params);
 		}
+		error_log('LEECODE_DEBUG : func_params ---> ' . var_export($func_params, true));
 
 		call_user_func_array('mysqli_stmt_bind_param', $func_params);
 	}
