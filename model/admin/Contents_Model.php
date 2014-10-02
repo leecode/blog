@@ -103,7 +103,8 @@ class Contents_Model extends Model {
 
 		if(!empty($q_title)) {
 			$sql .= " and title like ?";
-			$db_params->add('s', '%' . $q_title . '%');
+			$q_title = '%' . $q_title . '%';
+			$db_params->add('s', $q_title);
 		}
 
 		$sql .= " $sort_part ";

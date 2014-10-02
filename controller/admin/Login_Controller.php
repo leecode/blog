@@ -29,7 +29,6 @@ class Login_Controller extends Controller {
 		}
 
 		if(md5($password) != $user['password']) {
-			error_log('LEECODE_DEBUG : ' . $password . ', ' . md5($password) . ', ' . $user['password']);
 			$result['msg'] = '密码错误';
 			$result['elementName'] = 'password';
 

@@ -34,7 +34,9 @@ class MySQL {
 		if(!$this->conn = mysqli_connect($db_config['db_host'], $db_config['db_user'], $db_config['db_password'], $db_config['db_database'])) {
 			echo $this->get_error();
 		}
-		mysqli_query('set names "utf8"', $this->conn);
+
+		//mysqli_query('set names "utf8"', $this->conn);
+		mysqli_query($this->conn, 'set names "utf8"');
 	}
 
 	/**
@@ -152,19 +154,29 @@ class MySQL {
 		$args_count = func_num_args();
 		$args = func_get_args();
 		$func_params = array(&$this->stmt);
-		// Arguments is DBParams instantce
+		// Bind params through DBParams.
 		if(1 == $args_count && $args[0] instanceof DBParams) {
-			$func_params = array_merge($func_params, $args[0]->parse());
+			// In php version >= 5.3.x, mysqli_stmt_bind_param require values passed by references,
+			// so just make an array with all value references.
+			$dummy_array = $args[0]->parse();
+			// First element would be types string.
+			$key_values_array = array($dummy_array[0]);
+
+			$length = count($dummy_array);
+			for($i = 1; $i < $length; $i++) {
+				$key_values_array[] = &$dummy_array[$i];
+			}
+
+			$func_params = array_merge($func_params, $key_values_array);
 		} else {
 			$types = $args[0];
-			$values = $args[1];
-			if(!is_array($values)) {
-				$values = array($values);
+			$param_values = $args[1];
+			if(!is_array($param_values)) {
+				$values = array(&$param_values);
 			}
 			$db_params = array_merge(array($types), $values);
 			$func_params = array_merge($func_params, $db_params);
 		}
-		error_log('LEECODE_DEBUG : func_params ---> ' . var_export($func_params, true));
 
 		call_user_func_array('mysqli_stmt_bind_param', $func_params);
 	}
@@ -253,7 +265,7 @@ class DBParams {
 	 * @param $type  type of param, must be a valid one, reference mysqli_stmt::bind_param.
 	 * @param $value value of param.
 	 */
-	public function add($type, $value) {
+	public function add($type, &$value) {
 		$this->values[] = $value;
 		$this->types .= $type;
 	}
