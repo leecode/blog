@@ -35,8 +35,6 @@ class Metas_Controller extends Controller {
 		$meta->meta_order = $params['meta_order'];
 		$meta->type = $params['type'];
 
-		error_log('LEECODE_DEBUG : meta in controller ----> ' . var_export($meta, true));
-
 		$meta->save();
 
 		$path = 'admin/index.php?controller=metas&action=show&type=' . $params['type'];

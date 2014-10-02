@@ -59,7 +59,7 @@
             foreach($metas_list as $metas_item) {
           ?>
           <li class="size-5" id="tag-<?php echo $metas_item['mid'];?>">
-            <input type="checkbox" value="<?php echo $metas_item['mid'];?>" name="mid">
+            <input type="checkbox" class="metas_id" value="<?php echo $metas_item['mid'];?>" name="mid">
             <span onclick="tag_clicked(<?php echo $metas_item['mid'];?>);" rel="index.php?controller=metas&action=show&type=tag&mid=<?php echo $metas_item['mid'];?>"><?php echo $metas_item['name'];?></span>
             <a class="tag-edit-link" href="index.php?controller=metas&action=show&type=tag&mid=<?php echo $metas_item['mid'];?>">
               <i class="glyphicon glyphicon-pencil"></i>
